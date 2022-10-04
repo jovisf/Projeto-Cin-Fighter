@@ -31,7 +31,7 @@ ROUND_OVER_COOLDOWN = 2000
 
 
 #load background image
-bg_image = pygame.image.load("assets/background/background.jpg").convert_alpha()
+bg_image = pygame.image.load("fotoHome2.jpg").convert_alpha()
 
 
 
