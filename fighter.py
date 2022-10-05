@@ -1,5 +1,5 @@
 import pygame
-
+#teste
 class Fighter():
   def __init__(self, player, x, y, flip):
     self.player = player
