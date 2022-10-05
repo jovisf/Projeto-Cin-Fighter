@@ -16,10 +16,11 @@ class Fighter():
     self.hit = False
     self.health = 100
     self.alive = True
+    self.action = 0
 
 
 
-  def move(self, screen_width, screen_height, surface, target, round_over):
+  def move(self, screen_width, screen_height, surface, target):
     SPEED = 10
     GRAVITY = 2
     dx = 0
@@ -47,7 +48,7 @@ class Fighter():
           self.jump = True
         #attack
         if key[pygame.K_r] or key[pygame.K_t]:
-          self.attack(target)
+          self.attack(surface, target)
           #determine which attack type was used
           if key[pygame.K_r]:
             self.attack_type = 1
@@ -70,7 +71,7 @@ class Fighter():
           self.jump = True
         #attack
         if key[pygame.K_KP1] or key[pygame.K_KP2]:
-          self.attack(target)
+          self.attack(surface, target)
           #determine which attack type was used
           if key[pygame.K_KP1]:
             self.attack_type = 1
@@ -108,17 +109,23 @@ class Fighter():
 
 
 
-
-  def attack(self, target):
-    if self.attack_cooldown == 0:
-      #execute attack
-      self.attacking = True
-      self.attack_sound.play()
-      attacking_rect = pygame.Rect(self.rect.centerx - (2 * self.rect.width * self.flip), self.rect.y, 2 * self.rect.width, self.rect.height)
-      if attacking_rect.colliderect(target.rect):
-        print('hit')
+  def attack(self,surface, target):
+    attacking_rect = pygame.Rect(self.rect.centerx - (1.5 * self.rect.width * self.flip), self.rect.y, 1.5 * self.rect.width, self.rect.height / 2.85)
+    if attacking_rect.colliderect(target.rect):
+      print("hit")
+    pygame.draw.rect(surface, (0, 255, 0), attacking_rect)
 
 
 
-  def draw(self, surface):
-    pygame.draw.rect(surface, (255,0,0), self.rect)
+  def update_action(self, new_action):
+    #check if the new action is different to the previous one
+    if new_action != self.action:
+      self.action = new_action
+      #update the animation settings
+      self.frame_index = 0
+      self.update_time = pygame.time.get_ticks()
+
+
+
+  def draw(self, surface,color):
+    pygame.draw.rect(surface, color, self.rect)

@@ -16,8 +16,9 @@ FPS = 60
 
 #define colours
 RED = (255, 0, 0)
-YELLOW = (255, 255, 0)
+GREEN = (0, 255, 0)
 WHITE = (255, 255, 255)
+BLUE = (0,0,255)
 
 #define game variables
 intro_count = 3
@@ -52,12 +53,14 @@ def draw_health_bar(health, x, y):
   ratio = health / 100
   pygame.draw.rect(screen, WHITE, (x - 2, y - 2, 404, 34))
   pygame.draw.rect(screen, RED, (x, y, 400, 30))
-  pygame.draw.rect(screen, YELLOW, (x, y, 400 * ratio, 30))
+  pygame.draw.rect(screen, GREEN, (x, y, 400 * ratio, 30))
 
 
 #create two instances of fighters
 fighter_1 = Fighter(1, 200, 310, False)
 fighter_2 = Fighter(2, 700, 310, True)
+
+
 
 #game loop
 run = True
@@ -74,27 +77,13 @@ while run:
 
 
   #draw fighters
-  fighter_1.draw(screen)
-  fighter_2.draw(screen)
+  fighter_1.draw(screen, RED)
+  fighter_2.draw(screen, BLUE)
 
-  #check for player defeat
-  if round_over == False:
-    if fighter_1.alive == False:
-      score[1] += 1
-      round_over = True
-      round_over_time = pygame.time.get_ticks()
-    elif fighter_2.alive == False:
-      score[0] += 1
-      round_over = True
-      round_over_time = pygame.time.get_ticks()
-  else:
-    #display victory image
-    screen.blit(victory_img, (360, 150))
-    if pygame.time.get_ticks() - round_over_time > ROUND_OVER_COOLDOWN:
-      round_over = False
-      intro_count = 3
-      fighter_1 = Fighter(1, 200, 310, False)
-      fighter_2 = Fighter(2, 700, 310, True)
+  fighter_1.move(SCREEN_WIDTH, SCREEN_HEIGHT, screen, fighter_2)
+  fighter_2.move(SCREEN_WIDTH, SCREEN_HEIGHT, screen, fighter_1)
+
+
 
   #event handler
   for event in pygame.event.get():
