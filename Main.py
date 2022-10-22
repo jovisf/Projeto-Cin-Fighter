@@ -8,7 +8,7 @@ SCREEN_WIDTH = 1000
 SCREEN_HEIGHT = 600
 
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
-pygame.display.set_caption("Brawler")
+pygame.display.set_caption("Cin Fighter")
 
 #set framerate
 clock = pygame.time.Clock()
@@ -23,18 +23,14 @@ BLUE = (0,0,255)
 #define game variables
 intro_count = 3
 last_count_update = pygame.time.get_ticks()
-score = [0, 0]#player scores. [P1, P2]
 round_over = False
 ROUND_OVER_COOLDOWN = 2000
 
 
 
 
-
 #load background image
-bg_image = pygame.image.load("back.jpg").convert_alpha()
-
-
+bg_image = pygame.image.load("assets/backgroungd/back.jpg").convert_alpha()
 
 
 
@@ -50,7 +46,7 @@ def draw_bg():
 
 #function for drawing fighter health bars
 def draw_health_bar(health, x, y):
-  ratio = health / 100
+  ratio = health / 1000
   pygame.draw.rect(screen, WHITE, (x - 2, y - 2, 404, 34))
   pygame.draw.rect(screen, RED, (x, y, 400, 30))
   pygame.draw.rect(screen, GREEN, (x, y, 400 * ratio, 30))
@@ -74,7 +70,6 @@ while run:
   #show player stats
   draw_health_bar(fighter_1.health, 20, 20)
   draw_health_bar(fighter_2.health, 580, 20)
-
 
   #draw fighters
   fighter_1.draw(screen, RED)
