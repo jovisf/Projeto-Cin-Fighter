@@ -141,9 +141,9 @@ class Fighter():
     attacking_rect = pygame.Rect(self.rect.centerx - (1.5 * self.rect.width * self.flip), self.rect.y, 1.5 * self.rect.width, self.rect.height / 2.85)
     if attacking_rect.colliderect(target.rect):
       if target.defend:
-        target.health -= 1
+        target.health -= 5
       else:
-        target.health -= 100
+        target.health -= 20
     pygame.draw.rect(surface, (0, 255, 0), attacking_rect)
     self.attacking = False
 
