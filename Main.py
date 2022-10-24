@@ -36,7 +36,7 @@ WARRIOR_DATA = [WARRIOR_SIZE, WARRIOR_SCALE, WARRIOR_OFFSET]
 
 
 #load background image
-bg_image = pygame.image.load("back.jpg").convert_alpha()
+bg_image = pygame.image.load("assets/backgroungd/back.jpg").convert_alpha()
 
 #load spritesheets
 warrior_sheet = pygame.image.load("warriorRyu10.png").convert_alpha()
