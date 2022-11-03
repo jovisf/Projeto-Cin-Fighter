@@ -46,7 +46,6 @@ class Fighter():
     dx = 0
     dy = 0
     self.running = False
-    self.squat = False
     self.attack_type = 0
     
 
@@ -58,10 +57,10 @@ class Fighter():
       #check player 1 controls
       if self.player == 1:
         #movement
-        if key[pygame.K_a] and not(self.squat) and not(self.defend):
+        if key[pygame.K_a] and (not(self.squat) and not(self.defend)):
           dx = -SPEED
           self.running = True
-        if key[pygame.K_d] and not(self.squat) and not(self.defend):
+        if key[pygame.K_d] and (not(self.squat) and not(self.defend)):
           dx = SPEED
           self.running = True
         #jump
@@ -73,7 +72,7 @@ class Fighter():
           self.rect = pygame.Rect(( self.rect.left, self.rect.bottom, 80, 110))
           self.squat = True
         else:
-          self.rect = pygame.Rect(( self.rect.left, self.rect.top, 80, 180))
+          self.rect = pygame.Rect((self.rect.left, self.rect.top, 80, 180))
           self.squat = False
         #defend
         if key[pygame.K_x]:
@@ -97,10 +96,10 @@ class Fighter():
       #check player 2 controls
       if self.player == 2:
         #movement
-        if key[pygame.K_LEFT] and not(self.squat) and not(self.defend):
+        if key[pygame.K_LEFT] and (not(self.squat) and not(self.defend)):
           dx = -SPEED
           self.running = True
-        if key[pygame.K_RIGHT] and not(self.squat) and not(self.defend):
+        if key[pygame.K_RIGHT] and (not(self.squat) and not(self.defend)):
           dx = SPEED
           self.running = True
         #jump
@@ -240,7 +239,6 @@ class Fighter():
         else:
           target.health -= 100
           target.hit = True
-      pygame.draw.rect(surface, (0, 255, 0), attacking_rect)
 
 
 
@@ -254,7 +252,6 @@ class Fighter():
 
 
 
-  def draw(self, surface,color):
-    pygame.draw.rect(surface, color, self.rect)
+  def draw(self, surface):
     img = pygame.transform.flip(self.image, self.flip, False)
     surface.blit(img, (self.rect.x - (self.offset[0] * self.image_scale), self.rect.y - (self.offset[1] * self.image_scale)))

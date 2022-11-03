@@ -164,8 +164,8 @@ def main_menu():
 def play():
 
     #create two instances of fighters
-    fighter_1 = Fighter(1, 200, 310, False, WARRIOR_DATA, warrior_sheet, WARRIOR_ANIMATION_STEPS)
-    fighter_2 = Fighter(2, 700, 310, True, WARRIOR_DATA, chun_sheet, CHUN_ANIMATION_STEPS)
+    fighter_1 = Fighter(1, 250, 430, False, WARRIOR_DATA, warrior_sheet, WARRIOR_ANIMATION_STEPS)
+    fighter_2 = Fighter(2, 900, 430, True, WARRIOR_DATA, chun_sheet, CHUN_ANIMATION_STEPS)
 
     #define game variables
     intro_count = 3
@@ -205,8 +205,8 @@ def play():
         fighter_2.update()
 
         #draw fighters
-        fighter_1.draw(SCREEN, RED)
-        fighter_2.draw(SCREEN, BLUE)
+        fighter_1.draw(SCREEN)
+        fighter_2.draw(SCREEN)
 
         # back button  
         PLAY_MOUSE_POS = pygame.mouse.get_pos()
@@ -241,8 +241,8 @@ def play():
             if pygame.time.get_ticks() - round_over_time > ROUND_OVER_COOLDOWN:
                 round_over = False
                 intro_count = 3
-                fighter_1 = Fighter(1, 200, 310, False, WARRIOR_DATA, warrior_sheet, WARRIOR_ANIMATION_STEPS)
-                fighter_2 = Fighter(2, 700, 310, True, WARRIOR_DATA, chun_sheet, CHUN_ANIMATION_STEPS)
+                fighter_1 = Fighter(1, 250, 430, False, WARRIOR_DATA, warrior_sheet, WARRIOR_ANIMATION_STEPS)
+                fighter_2 = Fighter(2, 900, 430, True, WARRIOR_DATA, chun_sheet, CHUN_ANIMATION_STEPS)
 
         #update display
         pygame.display.update()
