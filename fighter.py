@@ -25,7 +25,6 @@ class Fighter():
     self.hit = False
     self.health = 1000
     self.alive = True
-    self.mana = 100
     self.defend = False
     self.defendHit = False
     self.squat = False
@@ -49,6 +48,7 @@ class Fighter():
     self.running = False
     self.squat = False
     self.attack_type = 0
+    
 
     #get keypresses
     key = pygame.key.get_pressed()
@@ -58,22 +58,23 @@ class Fighter():
       #check player 1 controls
       if self.player == 1:
         #movement
-        if key[pygame.K_a]:
+        if key[pygame.K_a] and not(self.squat) and not(self.defend):
           dx = -SPEED
           self.running = True
-        if key[pygame.K_d]:
+        if key[pygame.K_d] and not(self.squat) and not(self.defend):
           dx = SPEED
           self.running = True
         #jump
-        if key[pygame.K_w] and self.jump == False:
+        if key[pygame.K_w] and self.jump == False and not(self.defend):
           self.vel_y = -30
           self.jump = True
         #squat
-        if key[pygame.K_s] and self.jump == False:
-          self.rect = pygame.Rect(( self.rect.left, self.rect.bottom, 80, 110))
+        if key[pygame.K_s]:
+          self.rect = pygame.Rect(( self.rect.left, self.rect.bottom, 90, 110))
           self.squat = True
         else:
           self.rect = pygame.Rect(( self.rect.left, self.rect.top, 80, 180))
+          self.squat = False
         #defend
         if key[pygame.K_x]:
           self.defend = True
@@ -81,8 +82,9 @@ class Fighter():
           self.defend = False
 
 
+
         #attack
-        if key[pygame.K_r] or key[pygame.K_t]:
+        if (key[pygame.K_r] or key[pygame.K_t]) and not(self.defend):
           self.attack(surface, target)
           #determine which attack type was used
           if key[pygame.K_r]:
@@ -91,21 +93,22 @@ class Fighter():
             self.attack_type = 2
 
 
+
       #check player 2 controls
       if self.player == 2:
         #movement
-        if key[pygame.K_LEFT]:
+        if key[pygame.K_LEFT] and not(self.squat) and not(self.defend):
           dx = -SPEED
           self.running = True
-        if key[pygame.K_RIGHT]:
+        if key[pygame.K_RIGHT] and not(self.squat) and not(self.defend):
           dx = SPEED
           self.running = True
         #jump
-        if key[pygame.K_UP] and self.jump == False:
+        if key[pygame.K_UP] and self.jump == False and not(self.defend):
           self.vel_y = -30
           self.jump = True
         #attack
-        if key[pygame.K_o] or key[pygame.K_m]:
+        if (key[pygame.K_n] or key[pygame.K_m]) and not(self.defend):
           self.attack(surface, target)
           #determine which attack type was used
           if key[pygame.K_o]:
@@ -118,6 +121,7 @@ class Fighter():
           self.squat = True
         else:
           self.rect = pygame.Rect(( self.rect.left, self.rect.top, 80, 180))
+          self.squat = False
         #defend
         if key[pygame.K_p]:
           self.defend = True
@@ -230,7 +234,7 @@ class Fighter():
       else:
         attacking_rect = pygame.Rect(self.rect.centerx - (1.5 * self.rect.width * self.flip), self.rect.y, 1.5 * self.rect.width, self.rect.height / 2.85)
       if attacking_rect.colliderect(target.rect):
-        if target.defend:
+        if target.defend and (self.squat == target.squat):
           target.health -= 10
           target.defendHit = True
         else:
