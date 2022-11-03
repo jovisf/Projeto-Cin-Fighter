@@ -29,7 +29,7 @@ BLUE = (0,0,255)
 #define game variables
 intro_count = 3
 last_count_update = pygame.time.get_ticks()
-score = [0, 0]#player scores. [P1, P2]
+score = [0, 0] #player scores. [P1, P2]
 round_over = False
 ROUND_OVER_COOLDOWN = 2000
 
@@ -84,20 +84,30 @@ mixer.music.load('Street-Fighter-II-Arcade-Ryu-Stage.ogg')
 mixer.music.play()
 
 def options():
+    def toggleMusic():
+        if pygame.mixer.music.get_busy():
+            pygame.mixer.music.pause()
+        else:
+            pygame.mixer.music.unpause()
     while True:
         OPTIONS_MOUSE_POS = pygame.mouse.get_pos()
 
         SCREEN.fill("white")
 
-        OPTIONS_TEXT = get_font(45).render("This is the OPTIONS SCREEN.", True, "Black")
-        OPTIONS_RECT = OPTIONS_TEXT.get_rect(center=(640, 260))
+        OPTIONS_TEXT = get_font(45).render("Options", True, "Black")
+        OPTIONS_RECT = OPTIONS_TEXT.get_rect(center=(200, 100))
         SCREEN.blit(OPTIONS_TEXT, OPTIONS_RECT)
 
-        OPTIONS_BACK = Button(image=None, pos=(640, 460), 
-                            text_input="BACK", font=get_font(75), base_color="Black", hovering_color="Green")
+        OPTIONS_BACK = Button(image=None, pos=(200, 300), 
+                            text_input="Back", font=get_font(45), base_color="Black", hovering_color="Green")
+        OPTIONS_MUTE = Button(image=None, pos=(200, 200), 
+                            text_input="Mute", font=get_font(45), base_color="Black", hovering_color="Green")
 
         OPTIONS_BACK.changeColor(OPTIONS_MOUSE_POS)
         OPTIONS_BACK.update(SCREEN)
+        
+        OPTIONS_MUTE.changeColor(OPTIONS_MOUSE_POS)
+        OPTIONS_MUTE.update(SCREEN)
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -106,6 +116,8 @@ def options():
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if OPTIONS_BACK.checkForInput(OPTIONS_MOUSE_POS):
                     main_menu()
+                if OPTIONS_MUTE.checkForInput(OPTIONS_MOUSE_POS):
+                    toggleMusic()
 
         pygame.display.update()
 
@@ -197,7 +209,6 @@ def play():
         fighter_2.draw(SCREEN, BLUE)
 
         # back button  
-        # exit_button.draw(SCREEN)
         PLAY_MOUSE_POS = pygame.mouse.get_pos()
         PLAY_BACK = Button(image='assets/exit_btn.png', pos=(1150, 80), 
                             text_input="", font=get_font(24), base_color="Black", hovering_color="Green")
@@ -210,8 +221,8 @@ def play():
             if event.type == pygame.QUIT:
                 break
             if event.type == pygame.MOUSEBUTTONDOWN:
-                        if PLAY_BACK.checkForInput(PLAY_MOUSE_POS):
-                            main_menu()
+                if PLAY_BACK.checkForInput(PLAY_MOUSE_POS):
+                    main_menu()
 
 
         #check for player defeat
