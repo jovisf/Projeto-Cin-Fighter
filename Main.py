@@ -1,14 +1,19 @@
 import pygame
+from pygame.locals import *
+from pygame import mixer
+
+import sys
+from button import Button
 from fighter import Fighter
 
 pygame.init()
 
 #create game window
-SCREEN_WIDTH = 1000
-SCREEN_HEIGHT = 600
-
-screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+SCREEN_WIDTH = 1280
+SCREEN_HEIGHT = 720
+SCREEN = pygame.display.set_mode((1280, 720))
 pygame.display.set_caption("Cin Fighter")
+BG = pygame.image.load("assets/Background.png")
 
 #set framerate
 clock = pygame.time.Clock()
@@ -28,6 +33,9 @@ round_over = False
 ROUND_OVER_COOLDOWN = 2000
 
 
+def get_font(size): # Returns Press-Start-2P in the desired size
+    return pygame.font.Font("assets/font.ttf", size)
+
 #define fighter variables
 WARRIOR_SIZE = 162
 WARRIOR_SCALE = 4
@@ -41,6 +49,7 @@ bg_image = pygame.image.load("assets/backgroungd/back.jpg").convert_alpha()
 #load spritesheets
 warrior_sheet = pygame.image.load("sprites-4.png").convert_alpha()
 chun_sheet = pygame.image.load("chunSprites.png").convert_alpha()
+
 
 #load vicory image
 victory_img = pygame.image.load("victory.png").convert_alpha()
@@ -56,63 +65,160 @@ score_font = pygame.font.Font("turok.ttf", 30)
 #function for drawing text
 def draw_text(text, font, text_col, x, y):
   img = font.render(text, True, text_col)
-  screen.blit(img, (x, y))
+  SCREEN.blit(img, (x, y))
 
 #function for drawing background
 def draw_bg():
   scaled_bg = pygame.transform.scale(bg_image, (SCREEN_WIDTH, SCREEN_HEIGHT))
-  screen.blit(scaled_bg, (0, 0))
+  SCREEN.blit(scaled_bg, (0, 0))
 
 #function for drawing fighter health bars
 def draw_health_bar(health, x, y):
-  ratio = health / 1000
-  pygame.draw.rect(screen, WHITE, (x - 2, y - 2, 404, 34))
-  pygame.draw.rect(screen, RED, (x, y, 400, 30))
-  pygame.draw.rect(screen, GREEN, (x, y, 400 * ratio, 30))
+  ratio = health / 100
+  pygame.draw.rect(SCREEN, WHITE, (x - 2, y - 2, 404, 34))
+  pygame.draw.rect(SCREEN, RED, (x, y, 400, 30))
+  pygame.draw.rect(SCREEN, GREEN, (x, y, 400 * ratio, 30))
+
+# music 
+mixer.init()
+mixer.music.load('Street-Fighter-II-Arcade-Ryu-Stage.ogg')
+mixer.music.play()
 
 
-#create two instances of fighters
-fighter_1 = Fighter(1, 200, 310, False, WARRIOR_DATA, warrior_sheet, WARRIOR_ANIMATION_STEPS)
-fighter_2 = Fighter(2, 700, 310, True, WARRIOR_DATA, chun_sheet, CHUN_ANIMATION_STEPS)
+
+def options():
+    while True:
+        OPTIONS_MOUSE_POS = pygame.mouse.get_pos()
+
+        SCREEN.fill("white")
+
+        OPTIONS_TEXT = get_font(45).render("This is the OPTIONS SCREEN.", True, "Black")
+        OPTIONS_RECT = OPTIONS_TEXT.get_rect(center=(640, 260))
+        SCREEN.blit(OPTIONS_TEXT, OPTIONS_RECT)
+
+        OPTIONS_BACK = Button(image=None, pos=(640, 460), 
+                            text_input="BACK", font=get_font(75), base_color="Black", hovering_color="Green")
+
+        OPTIONS_BACK.changeColor(OPTIONS_MOUSE_POS)
+        OPTIONS_BACK.update(SCREEN)
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if OPTIONS_BACK.checkForInput(OPTIONS_MOUSE_POS):
+                    main_menu()
+
+        pygame.display.update()
+
+def main_menu():
+    while True:
+        SCREEN.blit(BG, (0, 0))
+
+        MENU_MOUSE_POS = pygame.mouse.get_pos()
+
+        MENU_TEXT = get_font(100).render("MAIN MENU", True, "#b68f40")
+        MENU_RECT = MENU_TEXT.get_rect(center=(640, 100))
+
+        PLAY_BUTTON = Button(image=pygame.image.load("assets/Play Rect.png"), pos=(640, 250), 
+                            text_input="PLAY", font=get_font(75), base_color="#d7fcd4", hovering_color="White")
+        OPTIONS_BUTTON = Button(image=pygame.image.load("assets/Options Rect.png"), pos=(640, 400), 
+                            text_input="OPTIONS", font=get_font(75), base_color="#d7fcd4", hovering_color="White")
+        QUIT_BUTTON = Button(image=pygame.image.load("assets/Quit Rect.png"), pos=(640, 550), 
+                            text_input="QUIT", font=get_font(75), base_color="#d7fcd4", hovering_color="White")
+
+        SCREEN.blit(MENU_TEXT, MENU_RECT)
+
+        for button in [PLAY_BUTTON, OPTIONS_BUTTON, QUIT_BUTTON]:
+            button.changeColor(MENU_MOUSE_POS)
+            button.update(SCREEN)
+        
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if PLAY_BUTTON.checkForInput(MENU_MOUSE_POS):
+                    play()
+                if OPTIONS_BUTTON.checkForInput(MENU_MOUSE_POS):
+                    options()
+                if QUIT_BUTTON.checkForInput(MENU_MOUSE_POS):
+                    pygame.quit()
+                    sys.exit()
+
 
 
 
 #game loop
-run = True
-while run:
+def play():
+    #create two instances of fighters
+    fighter_1 = Fighter(1, 200, 310, False, WARRIOR_DATA, warrior_sheet, WARRIOR_ANIMATION_STEPS)
+    fighter_2 = Fighter(2, 700, 310, True, WARRIOR_DATA, warrior_sheet, WARRIOR_ANIMATION_STEPS)
+    #define game variables
+    intro_count = 3
+    last_count_update = pygame.time.get_ticks()
+    score = [0, 0]#player scores. [P1, P2]
+    round_over = False
+    ROUND_OVER_COOLDOWN = 2000
 
-  clock.tick(FPS)
+    while True:
 
-  #draw background
-  draw_bg()
+        clock.tick(FPS)
 
-  #show player stats
-  draw_health_bar(fighter_1.health, 20, 20)
-  draw_health_bar(fighter_2.health, 580, 20)
-  draw_text("P1: " + str(score[0]), score_font, RED, 20, 60)
-  draw_text("P2: " + str(score[1]), score_font, RED, 580, 60)
+        
+        #draw background
+        draw_bg()
+        #show player stats
+        draw_health_bar(fighter_1.health, 20, 20)
+        draw_health_bar(fighter_2.health, 580, 20)
 
-  #update countdown
-  if intro_count <= 0:
-    #move fighters
-    fighter_1.move(SCREEN_WIDTH, SCREEN_HEIGHT, screen, fighter_2, round_over)
-    fighter_2.move(SCREEN_WIDTH, SCREEN_HEIGHT, screen, fighter_1, round_over)
-  else:
-    #display count timer
-    draw_text(str(intro_count), count_font, RED, SCREEN_WIDTH / 2, SCREEN_HEIGHT / 3)
-    #update count timer
-    if (pygame.time.get_ticks() - last_count_update) >= 1000:
-      intro_count -= 1
-      last_count_update = pygame.time.get_ticks()
+        #show player stats
+        draw_health_bar(fighter_1.health, 20, 20)
+        draw_health_bar(fighter_2.health, 580, 20)
+        draw_text("P1: " + str(score[0]), score_font, RED, 20, 60)
+        draw_text("P2: " + str(score[1]), score_font, RED, 580, 60)
 
-  #update fighters
-  fighter_1.update()
-  fighter_2.update()
+        #update countdown
+        if intro_count <= 0:
+            #move fighters
+            fighter_1.move(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN, fighter_2, round_over)
+            fighter_2.move(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN, fighter_1, round_over)
+        else:
+            #display count timer
+            draw_text(str(intro_count), count_font, RED, SCREEN_WIDTH / 2, SCREEN_HEIGHT / 3)
+            #update count timer
+            if (pygame.time.get_ticks() - last_count_update) >= 1000:
+                intro_count -= 1
+                last_count_update = pygame.time.get_ticks()
 
-  #draw fighters
-  fighter_1.draw(screen, RED)
-  fighter_2.draw(screen, BLUE)
+        #update fighters
+        fighter_1.update()
+        fighter_2.update()
 
+        #draw fighters
+        fighter_1.draw(SCREEN, RED)
+        fighter_2.draw(SCREEN, BLUE)
+
+        fighter_1.move(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN, fighter_2, round_over)
+        fighter_2.move(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN, fighter_1, round_over)
+        
+        # back button  
+        # exit_button.draw(SCREEN)
+        PLAY_MOUSE_POS = pygame.mouse.get_pos()
+        PLAY_BACK = Button(image='assets/exit_btn.png', pos=(1150, 80), 
+                                text_input="", font=get_font(24), base_color="Black", hovering_color="Green")
+
+        PLAY_BACK.changeColor(PLAY_MOUSE_POS)
+        PLAY_BACK.update(SCREEN)
+
+        #event handler
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                break
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                        if PLAY_BACK.checkForInput(PLAY_MOUSE_POS):
+                            main_menu()
 
   #check for player defeat
   if round_over == False:
@@ -140,6 +246,8 @@ while run:
 
   #update display
   pygame.display.update()
+        
+main_menu()
 
 #exit pygame
 pygame.quit()
