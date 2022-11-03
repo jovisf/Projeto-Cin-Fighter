@@ -23,7 +23,6 @@ class Fighter():
     self.hit = False
     self.health = 1000
     self.alive = True
-    self.mana = 100
     self.defend = False
     self.squat = False
 
