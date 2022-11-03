@@ -11,7 +11,8 @@ pygame.init()
 #create game window
 SCREEN_WIDTH = 1280
 SCREEN_HEIGHT = 720
-SCREEN = pygame.display.set_mode((1280, 720))
+
+SCREEN = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 pygame.display.set_caption("Cin Fighter")
 BG = pygame.image.load("assets/Background.png")
 
@@ -33,15 +34,14 @@ round_over = False
 ROUND_OVER_COOLDOWN = 2000
 
 
-def get_font(size): # Returns Press-Start-2P in the desired size
-    return pygame.font.Font("assets/font.ttf", size)
-
 #define fighter variables
 WARRIOR_SIZE = 162
 WARRIOR_SCALE = 4
 WARRIOR_OFFSET = [72, 56]
 WARRIOR_DATA = [WARRIOR_SIZE, WARRIOR_SCALE, WARRIOR_OFFSET]
 
+def get_font(size): # Returns Press-Start-2P in the desired size
+    return pygame.font.Font("assets/font.ttf", size)
 
 #load background image
 bg_image = pygame.image.load("assets/backgroungd/back.jpg").convert_alpha()
@@ -49,7 +49,6 @@ bg_image = pygame.image.load("assets/backgroungd/back.jpg").convert_alpha()
 #load spritesheets
 warrior_sheet = pygame.image.load("sprites-4.png").convert_alpha()
 chun_sheet = pygame.image.load("chunSprites.png").convert_alpha()
-
 
 #load vicory image
 victory_img = pygame.image.load("victory.png").convert_alpha()
@@ -74,7 +73,7 @@ def draw_bg():
 
 #function for drawing fighter health bars
 def draw_health_bar(health, x, y):
-  ratio = health / 100
+  ratio = health / 1000
   pygame.draw.rect(SCREEN, WHITE, (x - 2, y - 2, 404, 34))
   pygame.draw.rect(SCREEN, RED, (x, y, 400, 30))
   pygame.draw.rect(SCREEN, GREEN, (x, y, 400 * ratio, 30))
@@ -83,8 +82,6 @@ def draw_health_bar(health, x, y):
 mixer.init()
 mixer.music.load('Street-Fighter-II-Arcade-Ryu-Stage.ogg')
 mixer.music.play()
-
-
 
 def options():
     while True:
@@ -111,6 +108,7 @@ def options():
                     main_menu()
 
         pygame.display.update()
+
 
 def main_menu():
     while True:
@@ -147,14 +145,16 @@ def main_menu():
                     pygame.quit()
                     sys.exit()
 
-
+        pygame.display.update()
 
 
 #game loop
 def play():
+
     #create two instances of fighters
     fighter_1 = Fighter(1, 200, 310, False, WARRIOR_DATA, warrior_sheet, WARRIOR_ANIMATION_STEPS)
-    fighter_2 = Fighter(2, 700, 310, True, WARRIOR_DATA, warrior_sheet, WARRIOR_ANIMATION_STEPS)
+    fighter_2 = Fighter(2, 700, 310, True, WARRIOR_DATA, chun_sheet, CHUN_ANIMATION_STEPS)
+
     #define game variables
     intro_count = 3
     last_count_update = pygame.time.get_ticks()
@@ -166,18 +166,14 @@ def play():
 
         clock.tick(FPS)
 
-        
         #draw background
         draw_bg()
-        #show player stats
-        draw_health_bar(fighter_1.health, 20, 20)
-        draw_health_bar(fighter_2.health, 580, 20)
 
         #show player stats
         draw_health_bar(fighter_1.health, 20, 20)
         draw_health_bar(fighter_2.health, 580, 20)
-        draw_text("P1: " + str(score[0]), score_font, RED, 20, 60)
-        draw_text("P2: " + str(score[1]), score_font, RED, 580, 60)
+        draw_text("GIORDANO: " + str(score[0]), score_font, RED, 20, 60)
+        draw_text("CALEGARIO: " + str(score[1]), score_font, RED, 580, 60)
 
         #update countdown
         if intro_count <= 0:
@@ -200,14 +196,11 @@ def play():
         fighter_1.draw(SCREEN, RED)
         fighter_2.draw(SCREEN, BLUE)
 
-        fighter_1.move(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN, fighter_2, round_over)
-        fighter_2.move(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN, fighter_1, round_over)
-        
         # back button  
         # exit_button.draw(SCREEN)
         PLAY_MOUSE_POS = pygame.mouse.get_pos()
         PLAY_BACK = Button(image='assets/exit_btn.png', pos=(1150, 80), 
-                                text_input="", font=get_font(24), base_color="Black", hovering_color="Green")
+                            text_input="", font=get_font(24), base_color="Black", hovering_color="Green")
 
         PLAY_BACK.changeColor(PLAY_MOUSE_POS)
         PLAY_BACK.update(SCREEN)
@@ -220,33 +213,29 @@ def play():
                         if PLAY_BACK.checkForInput(PLAY_MOUSE_POS):
                             main_menu()
 
-  #check for player defeat
-  if round_over == False:
-    if fighter_1.alive == False:
-      score[1] += 1
-      round_over = True
-      round_over_time = pygame.time.get_ticks()
-    elif fighter_2.alive == False:
-      score[0] += 1
-      round_over = True
-      round_over_time = pygame.time.get_ticks()
-  else:
-    #display victory image
-    screen.blit(victory_img, (360, 150))
-    if pygame.time.get_ticks() - round_over_time > ROUND_OVER_COOLDOWN:
-      round_over = False
-      intro_count = 3
-      fighter_1 = Fighter(1, 200, 310, False, WARRIOR_DATA, warrior_sheet, WARRIOR_ANIMATION_STEPS)
-      fighter_2 = Fighter(2, 700, 310, True, WARRIOR_DATA, chun_sheet, CHUN_ANIMATION_STEPS)
 
-  #event handler
-  for event in pygame.event.get():
-    if event.type == pygame.QUIT:
-      run = False
+        #check for player defeat
+        if round_over == False:
+            if fighter_1.alive == False:
+                score[1] += 1
+                round_over = True
+                round_over_time = pygame.time.get_ticks()
+            elif fighter_2.alive == False:
+                score[0] += 1
+                round_over = True
+                round_over_time = pygame.time.get_ticks()
+        else:
+            #display victory image
+            SCREEN.blit(victory_img, (360, 150))
+            if pygame.time.get_ticks() - round_over_time > ROUND_OVER_COOLDOWN:
+                round_over = False
+                intro_count = 3
+                fighter_1 = Fighter(1, 200, 310, False, WARRIOR_DATA, warrior_sheet, WARRIOR_ANIMATION_STEPS)
+                fighter_2 = Fighter(2, 700, 310, True, WARRIOR_DATA, chun_sheet, CHUN_ANIMATION_STEPS)
 
-  #update display
-  pygame.display.update()
-        
+        #update display
+        pygame.display.update()
+
 main_menu()
 
 #exit pygame

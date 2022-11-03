@@ -69,8 +69,8 @@ class Fighter():
           self.vel_y = -30
           self.jump = True
         #squat
-        if key[pygame.K_s]:
-          self.rect = pygame.Rect(( self.rect.left, self.rect.bottom, 90, 110))
+        if key[pygame.K_s] and self.jump == False:
+          self.rect = pygame.Rect(( self.rect.left, self.rect.bottom, 80, 110))
           self.squat = True
         else:
           self.rect = pygame.Rect(( self.rect.left, self.rect.top, 80, 180))
@@ -108,7 +108,7 @@ class Fighter():
           self.vel_y = -30
           self.jump = True
         #attack
-        if (key[pygame.K_n] or key[pygame.K_m]) and not(self.defend):
+        if key[pygame.K_o] or key[pygame.K_m]:
           self.attack(surface, target)
           #determine which attack type was used
           if key[pygame.K_o]:
