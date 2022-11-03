@@ -4,7 +4,7 @@ import pygame
 
 #teste
 class Fighter():
-  def __init__(self, player, x, y, flip, data, sprite_sheet, animation_steps):
+  def __init__(self, player, x, y, flip, data, sprite_sheet, animation_steps,sound):
     self.player = player
     self.size = data[0]
     self.image_scale = data[1]
@@ -28,6 +28,7 @@ class Fighter():
     self.defend = False
     self.defendHit = False
     self.squat = False
+    self.sound_atack = sound
 
   def load_images(self, sprite_sheet, animation_steps):
     #extract images from spritesheet
@@ -233,12 +234,14 @@ class Fighter():
       else:
         attacking_rect = pygame.Rect(self.rect.centerx - (1.5 * self.rect.width * self.flip), self.rect.y, 1.5 * self.rect.width, self.rect.height / 2.85)
       if attacking_rect.colliderect(target.rect):
+        self.sound_atack.play()
         if target.defend and (self.squat == target.squat):
           target.health -= 10
           target.defendHit = True
         else:
           target.health -= 100
           target.hit = True
+
 
 
 
@@ -252,6 +255,6 @@ class Fighter():
 
 
 
-  def draw(self, surface,color):
+  def draw(self, surface,):
     img = pygame.transform.flip(self.image, self.flip, False)
     surface.blit(img, (self.rect.x - (self.offset[0] * self.image_scale), self.rect.y - (self.offset[1] * self.image_scale)))

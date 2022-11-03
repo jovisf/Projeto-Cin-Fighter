@@ -46,6 +46,9 @@ def get_font(size): # Returns Press-Start-2P in the desired size
 #load background image
 bg_image = pygame.image.load("assets/backgroungd/back.jpg").convert_alpha()
 
+#load audio
+punch_fx = pygame.mixer.Sound("assets/punch_audio.wav")
+
 #load spritesheets
 warrior_sheet = pygame.image.load("Giorsprites.png").convert_alpha()
 chun_sheet = pygame.image.load("chunSprites.png").convert_alpha()
@@ -164,8 +167,8 @@ def main_menu():
 def play():
 
     #create two instances of fighters
-    fighter_1 = Fighter(1, 250, 430, False, WARRIOR_DATA, warrior_sheet, WARRIOR_ANIMATION_STEPS)
-    fighter_2 = Fighter(2, 900, 430, True, WARRIOR_DATA, chun_sheet, CHUN_ANIMATION_STEPS)
+    fighter_1 = Fighter(1, 250, 430, False, WARRIOR_DATA, warrior_sheet, WARRIOR_ANIMATION_STEPS,punch_fx)
+    fighter_2 = Fighter(2, 900, 430, True, WARRIOR_DATA, chun_sheet, CHUN_ANIMATION_STEPS,punch_fx)
 
     #define game variables
     intro_count = 3
@@ -241,8 +244,8 @@ def play():
             if pygame.time.get_ticks() - round_over_time > ROUND_OVER_COOLDOWN:
                 round_over = False
                 intro_count = 3
-                fighter_1 = Fighter(1, 250, 430, False, WARRIOR_DATA, warrior_sheet, WARRIOR_ANIMATION_STEPS)
-                fighter_2 = Fighter(2, 900, 430, True, WARRIOR_DATA, chun_sheet, CHUN_ANIMATION_STEPS)
+                fighter_1 = Fighter(1, 250, 430, False, WARRIOR_DATA, warrior_sheet, WARRIOR_ANIMATION_STEPS,punch_fx)
+                fighter_2 = Fighter(2, 900, 430, True, WARRIOR_DATA, chun_sheet, CHUN_ANIMATION_STEPS,punch_fx)
 
         #update display
         pygame.display.update()
