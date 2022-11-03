@@ -47,7 +47,7 @@ def get_font(size): # Returns Press-Start-2P in the desired size
 bg_image = pygame.image.load("assets/backgroungd/back.jpg").convert_alpha()
 
 #load spritesheets
-warrior_sheet = pygame.image.load("sprites-4.png").convert_alpha()
+warrior_sheet = pygame.image.load("Giorsprites.png").convert_alpha()
 chun_sheet = pygame.image.load("chunSprites.png").convert_alpha()
 
 #load vicory image

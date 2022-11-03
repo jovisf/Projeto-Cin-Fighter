@@ -75,7 +75,7 @@ class Fighter():
           self.rect = pygame.Rect((self.rect.left, self.rect.top, 80, 180))
           self.squat = False
         #defend
-        if key[pygame.K_x]:
+        if key[pygame.K_y]:
           self.defend = True
         else:
           self.defend = False
@@ -107,12 +107,12 @@ class Fighter():
           self.vel_y = -30
           self.jump = True
         #attack
-        if key[pygame.K_o] or key[pygame.K_m]:
+        if key[pygame.K_i] or key[pygame.K_o]:
           self.attack(surface, target)
           #determine which attack type was used
-          if key[pygame.K_o]:
+          if key[pygame.K_i]:
             self.attack_type = 1
-          if key[pygame.K_m]:
+          if key[pygame.K_o]:
             self.attack_type = 2
         #squat
         if key[pygame.K_DOWN]:
@@ -252,6 +252,6 @@ class Fighter():
 
 
 
-  def draw(self, surface):
+  def draw(self, surface,color):
     img = pygame.transform.flip(self.image, self.flip, False)
     surface.blit(img, (self.rect.x - (self.offset[0] * self.image_scale), self.rect.y - (self.offset[1] * self.image_scale)))
