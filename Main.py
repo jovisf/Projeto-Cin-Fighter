@@ -39,13 +39,15 @@ WARRIOR_DATA = [WARRIOR_SIZE, WARRIOR_SCALE, WARRIOR_OFFSET]
 bg_image = pygame.image.load("assets/backgroungd/back.jpg").convert_alpha()
 
 #load spritesheets
-warrior_sheet = pygame.image.load("warriorRyu10.png").convert_alpha()
+warrior_sheet = pygame.image.load("sprites-4.png").convert_alpha()
+chun_sheet = pygame.image.load("chunSprites.png").convert_alpha()
 
 #load vicory image
 victory_img = pygame.image.load("victory.png").convert_alpha()
 
 #define number of steps in each animation
-WARRIOR_ANIMATION_STEPS = [6, 6, 10, 4, 7, 4, 7]
+WARRIOR_ANIMATION_STEPS = [6, 6, 10, 4, 7, 4, 7, 1, 1, 1, 1, 1, 4, 7]
+CHUN_ANIMATION_STEPS = [4, 12, 13, 5, 5, 4, 4, 1, 1, 3, 1, 1, 4, 7]
 
 #define font
 count_font = pygame.font.Font("turok.ttf", 80)
@@ -71,7 +73,7 @@ def draw_health_bar(health, x, y):
 
 #create two instances of fighters
 fighter_1 = Fighter(1, 200, 310, False, WARRIOR_DATA, warrior_sheet, WARRIOR_ANIMATION_STEPS)
-fighter_2 = Fighter(2, 700, 310, True, WARRIOR_DATA, warrior_sheet, WARRIOR_ANIMATION_STEPS)
+fighter_2 = Fighter(2, 700, 310, True, WARRIOR_DATA, chun_sheet, CHUN_ANIMATION_STEPS)
 
 
 
@@ -129,7 +131,7 @@ while run:
       round_over = False
       intro_count = 3
       fighter_1 = Fighter(1, 200, 310, False, WARRIOR_DATA, warrior_sheet, WARRIOR_ANIMATION_STEPS)
-      fighter_2 = Fighter(2, 700, 310, True, WARRIOR_DATA, warrior_sheet, WARRIOR_ANIMATION_STEPS)
+      fighter_2 = Fighter(2, 700, 310, True, WARRIOR_DATA, chun_sheet, CHUN_ANIMATION_STEPS)
 
   #event handler
   for event in pygame.event.get():

@@ -1,3 +1,5 @@
+from pickle import TRUE
+from re import T
 import pygame
 
 #teste
@@ -25,6 +27,8 @@ class Fighter():
     self.alive = True
     self.mana = 100
     self.defend = False
+    self.defendHit = False
+    self.squat = False
 
   def load_images(self, sprite_sheet, animation_steps):
     #extract images from spritesheet
@@ -43,6 +47,7 @@ class Fighter():
     dx = 0
     dy = 0
     self.running = False
+    self.squat = False
     self.attack_type = 0
 
     #get keypresses
@@ -64,8 +69,9 @@ class Fighter():
           self.vel_y = -30
           self.jump = True
         #squat
-        if key[pygame.K_s]:
-          self.rect = pygame.Rect(( self.rect.left, self.rect.bottom, 90, 110))
+        if key[pygame.K_s] and self.jump == False:
+          self.rect = pygame.Rect(( self.rect.left, self.rect.bottom, 80, 110))
+          self.squat = True
         else:
           self.rect = pygame.Rect(( self.rect.left, self.rect.top, 80, 180))
         #defend
@@ -99,16 +105,17 @@ class Fighter():
           self.vel_y = -30
           self.jump = True
         #attack
-        if key[pygame.K_n] or key[pygame.K_m]:
+        if key[pygame.K_o] or key[pygame.K_m]:
           self.attack(surface, target)
           #determine which attack type was used
-          if key[pygame.K_n]:
+          if key[pygame.K_o]:
             self.attack_type = 1
           if key[pygame.K_m]:
             self.attack_type = 2
         #squat
         if key[pygame.K_DOWN]:
           self.rect = pygame.Rect(( self.rect.left, self.rect.bottom, 90, 110))
+          self.squat = True
         else:
           self.rect = pygame.Rect(( self.rect.left, self.rect.top, 80, 180))
         #defend
@@ -156,13 +163,31 @@ class Fighter():
       self.update_action(6)#6:death
     elif self.hit == True:
       self.update_action(5)#5:hit
+    elif self.defendHit == True:
+      if self.squat == True:
+        self.update_action(11)
+      else:
+        self.update_action(9)
     elif self.attacking == True:
-      if self.attack_type == 1:
-        self.update_action(3)#3:attack1
-      elif self.attack_type == 2:
-        self.update_action(4)#4:attack2
+      if self.squat == True:
+        if self.attack_type == 1:
+          self.update_action(12)
+        elif self.attack_type == 2:
+          self.update_action(13)
+      else:
+        if self.attack_type == 1:
+          self.update_action(3)#3:attack1
+        elif self.attack_type == 2:
+          self.update_action(4)#4:attack2
     elif self.jump == True:
       self.update_action(2)#2:jump
+    elif self.defend == True:
+      if self.squat == True:
+        self.update_action(10)
+      else:
+        self.update_action(8)
+    elif self.squat == True:
+      self.update_action(7)
     elif self.running == True:
       self.update_action(1)#1:run
     else:
@@ -183,7 +208,7 @@ class Fighter():
       else:
         self.frame_index = 0
         #check if an attack was executed
-        if self.action == 3 or self.action == 4:
+        if self.action == 3 or self.action == 4 or self.action == 12 or self.action == 13:
           self.attacking = False
           self.attack_cooldown = 20
         #check if damage was taken
@@ -192,16 +217,22 @@ class Fighter():
           #if the player was in the middle of an attack, then the attack is stopped
           self.attacking = False
           self.attack_cooldown = 20
+        if self.action == 11 or 9:
+          self.defendHit = False
 
 
   def attack(self,surface, target):
     if self.attack_cooldown == 0:
       #execute attack
       self.attacking = True
-      attacking_rect = pygame.Rect(self.rect.centerx - (1.5 * self.rect.width * self.flip), self.rect.y, 1.5 * self.rect.width, self.rect.height / 2.85)
+      if self.squat == True:
+        attacking_rect = pygame.Rect(self.rect.centerx - (1.5 * self.rect.width * self.flip), self.rect.y - 110, 1.5 * self.rect.width, self.rect.height / 2.85)
+      else:
+        attacking_rect = pygame.Rect(self.rect.centerx - (1.5 * self.rect.width * self.flip), self.rect.y, 1.5 * self.rect.width, self.rect.height / 2.85)
       if attacking_rect.colliderect(target.rect):
         if target.defend:
           target.health -= 10
+          target.defendHit = True
         else:
           target.health -= 100
           target.hit = True
